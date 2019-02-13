@@ -15,9 +15,9 @@ import re
 
 
 # fetch from URL and return content in variable 'lines'
-def log_pull(inputurl):
-    print('log_pull: Fetching log file')
-    log = urllib.request.urlopen(inputurl)
+def log_pull(input_url):
+    print('log_pull: Fetching log file from %s ...', input_url)
+    log = urllib.request.urlopen(input_url)
     content = log.read()
     lines = content.decode()
     #print('lines: ',lines)
@@ -28,7 +28,7 @@ def log_pull(inputurl):
 
 # take input 'lines' and write to 'AWS_Log.txt'
 def log_write(lines):
-    print('log_write: Writing information to local log file')
+    print('log_write: Writing information to local log file...')
     file = open('AWS_Log.txt', 'w+')
     file.write(lines)
     file.close()
@@ -38,7 +38,7 @@ def log_write(lines):
 
 # take 'AWS_Log.txt' and split in to 'Mon_Log.txt' files
 def month_split():
-    print('month_split: Separating information by month')
+    print('month_split: Separating information by month...')
 
     months = ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug','Sep','']
     files = ['Oct_Log.txt', 'Nov_Log.txt', 'Dec_Log.txt', 'Jan_Log.txt', 'Feb_Log.txt', 'Mar_Log.txt', 'Apr_Log.txt', 'May_Log.txt', 'Jun_Log.txt', 'Jul_Log.txt', 'Aug_Log.txt','Sep_Log.txt']
@@ -140,7 +140,7 @@ def month_split():
 
 # main
 def main():
-    print('main: Running program')
+    print('main: Running program...')
     lines = log_pull('https://s3.amazonaws.com/tcmg476/http_access_log')
     log_write(lines)
     month_split()
