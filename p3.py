@@ -17,7 +17,7 @@ import re
 
 # fetch from URL and return content in variable 'lines'
 def log_pull(input_url):
-    print('log_pull(): Fetching log file from %s ...', input_url)
+    print('log_pull(): Fetching log file from',input_url,'...')
     log = urllib.request.urlopen(input_url)
     content = log.read()
     lines = content.decode()
