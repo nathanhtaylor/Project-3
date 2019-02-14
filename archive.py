@@ -6,6 +6,71 @@
 # Here be dead code
 
 
+# take 'AWS_Log.txt' and split in to 'Mon_Log.txt' files
+# def month_split():
+#     print('month_split(): Separating information by month...')
+#
+#     months = ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug','Sep','']
+#     files = ['Oct_Log.txt', 'Nov_Log.txt', 'Dec_Log.txt', 'Jan_Log.txt', 'Feb_Log.txt', 'Mar_Log.txt', 'Apr_Log.txt', 'May_Log.txt', 'Jun_Log.txt', 'Jul_Log.txt', 'Aug_Log.txt','Sep_Log.txt']
+#     total_count = 0
+#
+#     # start working in 'AWS_Log.txt'
+#     with open('AWS_Log.txt', 'r') as master_log:
+#         line = master_log.readline()
+#         total_count += 1
+#         # important for later
+#         i = -1
+#         # iterate through months
+#         for mon in months:
+#             # iterate
+#             i += 1
+#             # check if enough iterations have passed
+#             if i == 12:
+#                 ######## print('i=',i)
+#                 break
+#             # open relevant month file
+#             with open(files[i], 'a+') as mon_log:
+#                 # start iterating through lines that contain correct month
+#                 while ('/'+months[i+1]+'/') not in line:
+#                     print('month debug:')
+#                     print(months[i])
+#                     print(months[i+1])
+#                     print(line)
+#                     input()
+#                     # check for errors
+#                     if 'local -' not in line and 'remote -' not in line: #(line[0:11] != 'local -' and line[0:12] != 'remote -'):
+#                         if(line == ''): # special case
+#                             line = master_log.readline()
+#                             total_count += 1
+#                             break
+#                         ######## print('error')
+#                         print(line)
+#                         line = master_log.readline()
+#                         total_count += 1
+#                     # write to file
+#                     else:
+#                         ######## print('print line')
+#                         mon_log.write(line)
+#                         line = master_log.readline()
+#                         total_count += 1
+#     return total_count
+
+
+
+
+
+
+
+
+
+
+
+# months = ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug','Sep']
+# i = 0
+# while i < len(months):
+#     print(months[i])
+#     i += 1
+
 
 
 

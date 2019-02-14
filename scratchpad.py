@@ -1,16 +1,18 @@
-# months = ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug','Sep']
-# i = 0
-# while i < len(months):
-#     print(months[i])
-#     i += 1
+import urllib.request
 
-a = 1000
-while (a < 1010):
-    print(a)
-    a += 1
-    i = 0
-    while(i < 100):
+input_url = 'https://s3.amazonaws.com/tcmg476/http_access_log'
+print('log_pull(): Fetching log file from',input_url,'...')
+log = urllib.request.urlopen(input_url)
+content = log.read()
+lines = content.decode()
+#print('lines: ',lines)
+log.close()
+print(type(lines))
+
+lines = lines.splitlines()
+print(type(lines))
+print(len(lines))
+
+for i in lines:
+    if 'Oct' in i:
         print(i)
-        i += 1
-        if (i == 5):
-            break
