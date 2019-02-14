@@ -18,35 +18,39 @@ import re
 # fetch from URL and return content in variable 'lines'
 def log_pull(input_url):
     print('log_pull(): Fetching log file from',input_url,'...')
+
+    # Put data on to lines variable
     log = urllib.request.urlopen(input_url)
     content = log.read()
     lines = content.decode()
-    #print('lines: ',lines)
     log.close()
     lines = lines.splitlines()
-    return lines
+
+    # fill junk free list with lists of entry info
+    junk_free = []
+    for line in lines:
+        # check that entry is in proper format
+        parse = re.search('(.*?) - (.*) \[(.*?)\] \"GET\s(.*?)\s.*?\" (.+) (.+)', line)
+        if parse:
+            # add info to array and append to junk_free
+            junk_free.append([parse.group(3),parse.group(4),parse.group(5),parse.group(6)])
+    return junk_free
 
 
 
-# take input 'lines' and write to 'AWS_Log.txt'
-def log_write(lines):
-    print('log_write(): Writing information to local log file...')
-    file = open('AWS_Log.txt', 'w+')
-    print(type(lines))
-    for e in lines:
-        #print(e)
-        file.write(e+'\n')
-    file.close()
+def month_split(lines):
+    # print('month_split(): Separating information by month...')
+    # months = ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug','Sep']
+    # files = ['Oct_Log.txt', 'Nov_Log.txt', 'Dec_Log.txt', 'Jan_Log.txt', 'Feb_Log.txt', 'Mar_Log.txt', 'Apr_Log.txt', 'May_Log.txt', 'Jun_Log.txt', 'Jul_Log.txt', 'Aug_Log.txt','Sep_Log.txt']
+    # total_count = 0
+
+    #what on earth am i going to do with you
+
     return
 
 
 
-def month_split():
-
-
-
-
-
+def parse():
     return
 
 
@@ -54,9 +58,9 @@ def month_split():
 # main
 def main():
     print('main(): Running program...')
-    lines = log_pull('https://s3.amazonaws.com/tcmg476/http_access_log')
-    log_write(lines)
-    print('Total entries sorted:')
+    junk_free = log_pull('https://s3.amazonaws.com/tcmg476/http_access_log')
+    month_split(junk_free)
+    print('Done')
     return
 
 main()

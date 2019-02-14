@@ -5,6 +5,26 @@
 ################################
 # Here be dead code
 
+# # take input 'lines' and write to 'AWS_Log.txt'
+# def log_write(lines):
+#     print('log_write(): Writing information to local log file...')
+#     file = open('AWS_Log.txt', 'w+')
+#     print(type(lines))
+#     for e in lines:
+#         #print(e)
+#         file.write(e+'\n')
+#     file.close()
+#     return
+
+
+
+
+
+
+
+
+
+
 
 # take 'AWS_Log.txt' and split in to 'Mon_Log.txt' files
 # def month_split():
