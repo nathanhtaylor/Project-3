@@ -30,23 +30,41 @@ def log_pull(input_url):
     junk_free = []
     for line in lines:
         # check that entry is in proper format
-        parse = re.search('(.*?) - (.*) \[(.*?)\] \"GET\s(.*?)\s.*?\" (.+) (.+)', line)
+        parse = re.search('(.*?.*) \[(.*?)\] \"?.*?(.*?)\"? ([^"].+?)\"? (.+) (.+)', line)
+            # my idea      (.*?) - (.*) \[(.*?)\] \"?.*?(.*?).+?\"? (.+?) (.+) (.+)
+            # my idea 2    (.*?.*) \[(.*?)\] \"?.*?(.*?)\"? ([^"].+?)\"? (.+) (.+)           no username
+            # jeffs idea   (.*?) - .* \[(.*?)\] \"?(.*?.*?.+)\" (.+) (.+)
         if parse:
             # add info to array and append to junk_free
             junk_free.append([parse.group(3),parse.group(4),parse.group(5),parse.group(6)])
+        else:
+            print(line)
     return junk_free
 
 
 
-def month_split(lines):
-    # print('month_split(): Separating information by month...')
-    # months = ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug','Sep']
-    # files = ['Oct_Log.txt', 'Nov_Log.txt', 'Dec_Log.txt', 'Jan_Log.txt', 'Feb_Log.txt', 'Mar_Log.txt', 'Apr_Log.txt', 'May_Log.txt', 'Jun_Log.txt', 'Jul_Log.txt', 'Aug_Log.txt','Sep_Log.txt']
-    # total_count = 0
+def month_split(junk_free):
+    print('month_split(): Separating information by month...')
+    months = ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug','Sep']
+    files = ['Oct_Log.txt', 'Nov_Log.txt', 'Dec_Log.txt', 'Jan_Log.txt', 'Feb_Log.txt', 'Mar_Log.txt', 'Apr_Log.txt', 'May_Log.txt', 'Jun_Log.txt', 'Jul_Log.txt', 'Aug_Log.txt','Sep_Log.txt']
+    # junk_free = [ [time] , [filename] , [code1] , [code2] ]
+    total_count = 0
+    i = -1
+    j = 0
 
-    #what on earth am i going to do with you
-
-    return
+    for month in months:
+        i += 1
+        if i > len(months):
+            break
+        with open(month+'_Log.txt','w+') as file:
+            while month in junk_free[j][0]:
+                working = str(junk_free[j][0]) + ' ' + str(junk_free[j][1]) + ' ' + str(junk_free[j][2]) + ' ' + str(junk_free[j][3]) +'\n'
+                file.write(working + '\n')
+                # print(junk_free[j])
+                j += 1
+                total_count += 1
+    literal_total_count = len(junk_free)
+    return literal_total_count
 
 
 
@@ -59,7 +77,7 @@ def parse():
 def main():
     print('main(): Running program...')
     junk_free = log_pull('https://s3.amazonaws.com/tcmg476/http_access_log')
-    month_split(junk_free)
+    total_clean_lines = month_split(junk_free)
     print('Done')
     return
 
