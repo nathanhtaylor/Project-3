@@ -1,24 +1,19 @@
-# Project 3
-# Nathan Taylor
-#
-# How many total requests were made in the time period represented in the log?
-# How many requests were made on each day? per week? per month?
-# What percentage of the requests were not successful (any 4xx status code)?
-# What percentage of the requests were redirected elsewhere (any 3xx codes)?
-# What was the most-requested file?
-# What was the least-requested file?
-
-
+# =================
+# =   Project 3   =
+# = Nathan Taylor =
+#==================
 
 import urllib.request
 import re
 from datetime import datetime
+import time
 import os
+
 
 
 # fetch from URL and return content in variable 'lines'
 def log_pull(input_url):
-    print('log_pull(): Fetching log file from ' + input_url + '...')
+    print('log_pull():\tFetching log file from ' + input_url + '...')
 
     # Put data on to lines variable
     log = urllib.request.urlopen(input_url)
@@ -36,15 +31,14 @@ def log_pull(input_url):
             # add info to array and append to junk_free
             # junk_free = [ [time] , [filename] , [code1] , [code2] ]
             junk_free.append([parse.group(1),parse.group(2),parse.group(3),parse.group(4)])
-        # else:
-        #    print(line)
+
     return junk_free
 
 
 
 # split up data by month and write it to month log files
 def month_split(junk_free):
-    print('month_split(): Separating information by month...')
+    print('month_split():\tSeparating information by month...')
     # junk_free = [ [time] , [filename] , [code1] , [code2] ]
 
     # Define a few things
@@ -66,13 +60,14 @@ def month_split(junk_free):
                 total_count += 1
     # return total length for later
     literal_total_count = len(junk_free)
+
     return literal_total_count
 
 
 
 # read information and return information for report
 def parse(junk_free, total_clean_lines):
-    print('parse(): Parsing through data...')
+    print('parse():\tParsing through data...')
     # junk_free = [ [time] , [filename] , [code1] , [code2] ]
     # results = [ Total Entries , [Weekdays] , [Months] , 3xx Total , 4xx Total , Most Req. , Least Req. ]
     results = [total_clean_lines,[0]*7,[0]*12,0,0,' ',' ',0,0]
@@ -118,41 +113,61 @@ def parse(junk_free, total_clean_lines):
 
 
 
-# clean up files afterwards
+# clean up files from last run if they exist
 def clean_up():
+    print('clean_up():\tCleaning up old files...')
+
+    # iterate through list and delete files accordingly
+    months = ['Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep']
+    for month in months:
+        if os.path.isfile(month + '_Log.txt'):
+            os.remove(month + '_Log.txt')
+
     return
 
 
 
 # main
 def main():
-    print('main(): Running program...')
+    print('main():\t\tRunning program...')
+
+    # start the clock
+    start_time = time.time()
 
     #run functions
+    if os.path.isfile('Jan_Log.txt'):
+        clean_up()
     junk_free = log_pull('https://s3.amazonaws.com/tcmg476/http_access_log')
     total_clean_lines = month_split(junk_free)
     results = parse(junk_free, total_clean_lines)
 
     # print report
-    print('='*30)
-    print('=' + ' '*11 + 'REPORT' + ' '*11 + '=')
-    print('='*30)
+    print('\n'+'='*70)
+    print('=' + ' '*31 + 'REPORT' + ' '*31 + '=')
+    print('='*70)
     print('\nTotal requests:\t', results[0])
     print('\tUnsuccessful requests (4xx codes): %d (%.2f%%)' % (results[4], (results[4]/results[0])*100) )
     print('\tRedirects (3xx codes): %d (%.2f%%)' % (results[3], (results[3]/results[0])*100) )
     print('\n Total requests per weekday:')
-    print('\tMonday:  ',results[1][0])
-    print('\tTuesday:  ',results[1][1])
-    print('\tWednesday:  ',results[1][2])
-    print('\tThursday:  ',results[1][3])
-    print('\tFriday:  ',results[1][4])
-    print('\tSaturday:  ',results[1][5])
-    print('\tSunday:  ',results[1][6])
-    print('\nThe most requested file was "%s" at %d requests' % (results[5], results[7]))
-    print('\nThe least requested file was "%s" at %d requests' % (results[6], results[8]))
+    print('\tMonday:  ', results[1][0])
+    print('\tTuesday:  ', results[1][1])
+    print('\tWednesday:  ', results[1][2])
+    print('\tThursday:  ', results[1][3])
+    print('\tFriday:  ', results[1][4])
+    print('\tSaturday:  ', results[1][5])
+    print('\tSunday:  ', results[1][6])
+    print('\nThe most requested file was "%s" with %d requests' % (results[5], results[7]))
+    print('\nThe least requested file was "%s" with %d requests' % (results[6], results[8]))
+    print('\n' + '='*70)
 
-    print('main(): done')
+    # stop the clock
+    end_time = time.time()
+    total_time = end_time - start_time
+
+    print('\nmain(): Done in %s seconds' % round(total_time, 3), '(+/- .5%)')
 
     return
+
+
 
 main()

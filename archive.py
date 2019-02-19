@@ -5,6 +5,17 @@
 ################################
 # Here be dead code
 
+
+
+
+    # # start the clock
+    # start_time = time.process_time()
+    # print('\nmain(): done in %s seconds' % round(time.process_time() - start_time, 3))
+    #
+
+
+
+
 # # take input 'lines' and write to 'AWS_Log.txt'
 # def log_write(lines):
 #     print('log_write(): Writing information to local log file...')
