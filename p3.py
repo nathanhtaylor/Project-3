@@ -13,7 +13,7 @@
 import urllib.request
 import re
 from datetime import datetime
-
+import os
 
 
 # fetch from URL and return content in variable 'lines'
@@ -75,7 +75,7 @@ def parse(junk_free, total_clean_lines):
     print('parse(): Parsing through data...')
     # junk_free = [ [time] , [filename] , [code1] , [code2] ]
     # results = [ Total Entries , [Weekdays] , [Months] , 3xx Total , 4xx Total , Most Req. , Least Req. ]
-    results = [total_clean_lines,[0]*7,[0]*12,0,0,' ',' ']
+    results = [total_clean_lines,[0]*7,[0]*12,0,0,' ',' ',0,0]
 
     file_dict = {' ':5}
 
@@ -110,16 +110,47 @@ def parse(junk_free, total_clean_lines):
             elif file_dict[entry[1]] < file_dict[results[5]]:
                 results[6] = entry[1]
 
+    # add most/least totals to results
+    results[7] = file_dict[results[5]]
+    results[8] = file_dict[results[6]]
+
     return results
+
+
+
+# clean up files afterwards
+def clean_up():
+    return
 
 
 
 # main
 def main():
     print('main(): Running program...')
+
+    #run functions
     junk_free = log_pull('https://s3.amazonaws.com/tcmg476/http_access_log')
     total_clean_lines = month_split(junk_free)
     results = parse(junk_free, total_clean_lines)
+
+    # print report
+    print('='*30)
+    print('=' + ' '*11 + 'REPORT' + ' '*11 + '=')
+    print('='*30)
+    print('\nTotal requests:\t', results[0])
+    print('\tUnsuccessful requests (4xx codes): %d (%.2f%%)' % (results[4], (results[4]/results[0])*100) )
+    print('\tRedirects (3xx codes): %d (%.2f%%)' % (results[3], (results[3]/results[0])*100) )
+    print('\n Total requests per weekday:')
+    print('\tMonday:  ',results[1][0])
+    print('\tTuesday:  ',results[1][1])
+    print('\tWednesday:  ',results[1][2])
+    print('\tThursday:  ',results[1][3])
+    print('\tFriday:  ',results[1][4])
+    print('\tSaturday:  ',results[1][5])
+    print('\tSunday:  ',results[1][6])
+    print('\nThe most requested file was "%s" at %d requests' % (results[5], results[7]))
+    print('\nThe least requested file was "%s" at %d requests' % (results[6], results[8]))
+
     print('main(): done')
 
     return
