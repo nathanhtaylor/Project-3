@@ -4,7 +4,6 @@
 # =================
 
 # TO DO:
-# add monthly counts
 # add parse_2()
 # spin up ubuntu vbox
 
@@ -135,27 +134,14 @@ def clean_up():
 
 
 
-# main
-def main():
-    print('main():\t\tRunning program...')
-
-    # start the clock
-    start_time = time.time()
-
-    #run functions
-    if os.path.isfile('Jan_Log.txt'):
-        clean_up()
-    junk_free = log_pull('https://s3.amazonaws.com/tcmg476/http_access_log')
-    total_clean_lines = month_split(junk_free)
-    results = parse(junk_free, total_clean_lines)
-
+def report(results):
     # print report
     print('\n'+'='*70)
     print('=' + ' '*31 + 'REPORT' + ' '*31 + '=')
     print('='*70)
     print('\nTotal requests:\t', results[0])
-    print('\tUnsuccessful requests (4xx codes): %d (%.2f%%)' % (results[4], (results[4]/results[0])*100) )
-    print('\tRedirects (3xx codes): %d (%.2f%%)' % (results[3], (results[3]/results[0])*100) )
+    print('\tUnsuccessful requests (4xx codes): \t%d (%.2f%%)' % (results[4], (results[4]/results[0])*100) )
+    print('\tRedirects (3xx codes): \t\t\t%d (%.2f%%)' % (results[3], (results[3]/results[0])*100) )
 
     print('\nTotal requests per weekday:')
     print('\tMonday:  \t', results[1][0])
@@ -178,11 +164,29 @@ def main():
     print('\nThe least requested file was "%s" with %d requests' % (results[6], results[8]))
     print('\n' + '='*70)
 
+    return
+
+
+
+# main
+def main():
+    print('main():\t\tRunning program...')
+
+    # start the clock
+    start_time = time.time()
+
+    #run functions
+    if os.path.isfile('Jan_Log.txt'):
+        clean_up()
+    junk_free = log_pull('https://s3.amazonaws.com/tcmg476/http_access_log')
+    total_clean_lines = month_split(junk_free)
+    results = parse(junk_free, total_clean_lines)
+    report(results)
+
     # stop the clock
     end_time = time.time()
     total_time = end_time - start_time
-
-    print('\nmain(): Done in %s seconds' % round(total_time, 3), '(+/- .5%)')
+    print('\nmain(): Done in %s seconds' % round(total_time, 3), '(+/-1%)')
 
     return
 

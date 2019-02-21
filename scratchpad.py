@@ -6,46 +6,61 @@
 # What was the least-requested file?
 
 
+
+
 # WIP parse_2()
-# def parse_2():
-#
-#
-#     # results = [ Total Entries , [Weekdays] , [Months] , 3xx Total , 4xx Total , Most Req. , Least Req. ]
-#     results
-#
-#     return results
-#
-# def main():
-#     entry = ['01/Aug/1995:00:01:52 -0600', '276.html', '200', '1041']
-#     parse
-results = [100,[0]*7,[0]*12,0,0,' ',' ',0,0]
-results[2][0] = 10000
-results[2][2] = 100
+
+file_dict = {}
+
+def parse_2(entry):
+    # entry = ['date','filename','code1', 'code2']
+    # results = [ Total Entries , [Weekdays] , [Months] , 3xx Total , 4xx Total , Most Req. , Least Req. ]
+
+    # increment weekday and month count
+    parsed_date = datetime.strptime(entry[0], '%d/%b/%Y:%H:%M:%S %z')
+    results[1][parsed_date.weekday()] += 1
+    results[2][parsed_date.month - 1] += 1
+
+    # check if file is in dictionary
+    if entry[1] in file_dict:
+        file_dict[entry[1]] += 1
+        # update most requested file if needed
+        if file_dict[entry[1]] > file_dict[results[5]]:
+            results[5] = entry[1]
+        # update least requested file if needed
+        elif file_dict[entry[1]] < file_dict[results[5]]:
+            results[6] = entry[1]
+    # if not in dictionary, add it
+    else:
+        file_dict[entry[1]] = 1
+        # update most requested file if needed
+        if file_dict[entry[1]] > file_dict[results[5]]:
+            results[5] = entry[1]
+        # update least requested file if needed
+        elif file_dict[entry[1]] < file_dict[results[5]]:
+            results[6] = entry[1]
+
+    # check error code
+    if entry[2][0] == '3':
+        results[3] += 1
+    elif entry[2][0] == '4':
+        results[4] += 1
 
 
-print('\n'+'='*70)
-print('=' + ' '*31 + 'REPORT' + ' '*31 + '=')
-print('='*70)
-print('\nTotal requests:\t', results[0])
-print('\tUnsuccessful requests (4xx codes): %d (%.2f%%)' % (results[4], (results[4]/results[0])*100) )
-print('\tRedirects (3xx codes): %d (%.2f%%)' % (results[3], (results[3]/results[0])*100) )
-print('\nTotal requests per weekday:')
-print('\nTotal requests per weekday:')
-print('\tMonday:  \t', results[1][0])
-print('\tTuesday:  \t', results[1][1])
-print('\tWednesday:  \t', results[1][2])
-print('\tThursday:  \t', results[1][3])
-print('\tFriday:  \t', results[1][4])
-print('\tSaturday:  \t', results[1][5])
-print('\tSunday:  \t', results[1][6])
-print('\nTotal Requests per Month:')
-print('\tJan: %d\tFeb: %d' % (results[2][0], results[2][1]))
-print('\tMar: %d\tApr: %d' % (results[2][2], results[2][3]))
-print('\tMay: %d\tJun: %d' % (results[2][4], results[2][5]))
-print('\tJul: %d\tAug: %d' % (results[2][6], results[2][7]))
-print('\tSep: %d\tOct: %d' % (results[2][8], results[2][9]))
-print('\tNov: %d\tDec: %d' % (results[2][10], results[2][11]))
 
-print('\nThe most requested file was "%s" with %d requests' % (results[5], results[7]))
-print('\nThe least requested file was "%s" with %d requests' % (results[6], results[8]))
-print('\n' + '='*70)
+    return results
+
+        # # add most/least totals to results
+        # results[7] = file_dict[results[5]]
+        # results[8] = file_dict[results[6]]
+        #needs to be added to main
+
+
+
+def main():
+    entry = ['01/Aug/1995:00:01:52 -0600', '276.html', '200', '1041']
+
+
+
+    print(testdate)
+    #parse_2(entry)
