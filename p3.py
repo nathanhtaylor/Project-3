@@ -1,7 +1,14 @@
 # =================
 # =   Project 3   =
 # = Nathan Taylor =
-#==================
+# =================
+
+# TO DO:
+# add monthly counts
+# add parse_2()
+# spin up ubuntu vbox
+
+
 
 import urllib.request
 import re
@@ -58,6 +65,7 @@ def month_split(junk_free):
                 file.write(working) #+ '\n')
                 j += 1
                 total_count += 1
+                #parse_2(working)
     # return total length for later
     literal_total_count = len(junk_free)
 
@@ -148,14 +156,24 @@ def main():
     print('\nTotal requests:\t', results[0])
     print('\tUnsuccessful requests (4xx codes): %d (%.2f%%)' % (results[4], (results[4]/results[0])*100) )
     print('\tRedirects (3xx codes): %d (%.2f%%)' % (results[3], (results[3]/results[0])*100) )
-    print('\n Total requests per weekday:')
-    print('\tMonday:  ', results[1][0])
-    print('\tTuesday:  ', results[1][1])
-    print('\tWednesday:  ', results[1][2])
-    print('\tThursday:  ', results[1][3])
-    print('\tFriday:  ', results[1][4])
-    print('\tSaturday:  ', results[1][5])
-    print('\tSunday:  ', results[1][6])
+
+    print('\nTotal requests per weekday:')
+    print('\tMonday:  \t', results[1][0])
+    print('\tTuesday:  \t', results[1][1])
+    print('\tWednesday:  \t', results[1][2])
+    print('\tThursday:  \t', results[1][3])
+    print('\tFriday:  \t', results[1][4])
+    print('\tSaturday:  \t', results[1][5])
+    print('\tSunday:  \t', results[1][6])
+
+    print('\nTotal Requests per Month:')
+    print('\tJan: %d\tFeb: %d' % (results[2][0], results[2][1]))
+    print('\tMar: %d\tApr: %d' % (results[2][2], results[2][3]))
+    print('\tMay: %d\tJun: %d' % (results[2][4], results[2][5]))
+    print('\tJul: %d\tAug: %d' % (results[2][6], results[2][7]))
+    print('\tSep: %d\tOct: %d' % (results[2][8], results[2][9]))
+    print('\tNov: %d\tDec: %d' % (results[2][10], results[2][11]))
+
     print('\nThe most requested file was "%s" with %d requests' % (results[5], results[7]))
     print('\nThe least requested file was "%s" with %d requests' % (results[6], results[8]))
     print('\n' + '='*70)
