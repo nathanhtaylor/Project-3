@@ -15,7 +15,9 @@ from datetime import datetime
 import time
 import os
 
-
+#set up some global stuff
+file_dict = {' ':5}
+results = [0,[0]*7,[0]*12,0,0,' ',' ',0,0]
 
 # fetch from URL and return content in variable 'lines'
 def log_pull(input_url):
@@ -42,6 +44,45 @@ def log_pull(input_url):
 
 
 
+# read information of an entry and add to totals, used in month_split()
+def parse_2(entry):
+    # entry = ['date','filename','code1', 'code2']
+    # results = [ Total Entries , [Weekdays] , [Months] , 3xx Total , 4xx Total , Most Req. , Least Req. ]
+
+    # increment weekday and month count
+    parsed_date = datetime.strptime(entry[0], '%d/%b/%Y:%H:%M:%S %z')
+    results[1][parsed_date.weekday()] += 1
+    results[2][parsed_date.month - 1] += 1
+
+    # check if file is in dictionary
+    if entry[1] in file_dict:
+        file_dict[entry[1]] += 1
+        # update most requested file if needed
+        if file_dict[entry[1]] > file_dict[results[5]]:
+            results[5] = entry[1]
+        # update least requested file if needed
+        elif file_dict[entry[1]] < file_dict[results[5]]:
+            results[6] = entry[1]
+    # if not in dictionary, add it
+    else:
+        file_dict[entry[1]] = 1
+        # update most requested file if needed
+        if file_dict[entry[1]] > file_dict[results[5]]:
+            results[5] = entry[1]
+        # update least requested file if needed
+        elif file_dict[entry[1]] < file_dict[results[5]]:
+            results[6] = entry[1]
+
+    # check error code
+    if entry[2][0] == '3':
+        results[3] += 1
+    elif entry[2][0] == '4':
+        results[4] += 1
+
+    return results
+
+
+
 # split up data by month and write it to month log files
 def month_split(junk_free):
     print('month_split():\tSeparating information by month...')
@@ -62,59 +103,12 @@ def month_split(junk_free):
             while month in junk_free[j][0]:
                 working = str(junk_free[j][0]) + ' ' + str(junk_free[j][1]) + ' ' + str(junk_free[j][2]) + ' ' + str(junk_free[j][3]) +'\n'
                 file.write(working) #+ '\n')
+                results = parse_2(junk_free[j])
                 j += 1
                 total_count += 1
-                #parse_2(working)
     # return total length for later
-    literal_total_count = len(junk_free)
 
-    return literal_total_count
-
-
-
-# read information and return information for report
-def parse(junk_free, total_clean_lines):
-    print('parse():\tParsing through data...')
-    # junk_free = [ [time] , [filename] , [code1] , [code2] ]
-    # results = [ Total Entries , [Weekdays] , [Months] , 3xx Total , 4xx Total , Most Req. , Least Req. ]
-    results = [total_clean_lines,[0]*7,[0]*12,0,0,' ',' ',0,0]
-
-    file_dict = {' ':5}
-
-    for entry in junk_free:
-        # check day of the week and month
-        parsed_date = datetime.strptime(entry[0], '%d/%b/%Y:%H:%M:%S %z')
-        results[1][parsed_date.weekday()] += 1
-        results[2][parsed_date.month - 1] += 1
-
-        # check error code
-        if entry[2][0] == '3':
-            results[3] += 1
-        elif entry[2][0] == '4':
-            results[4] += 1
-
-        # check if file is in dictionary
-        if entry[1] in file_dict:
-            file_dict[entry[1]] += 1
-            # update most requested file if needed
-            if file_dict[entry[1]] > file_dict[results[5]]:
-                results[5] = entry[1]
-            # update least requested file if needed
-            elif file_dict[entry[1]] < file_dict[results[5]]:
-                results[6] = entry[1]
-        # if not, add it
-        else:
-            file_dict[entry[1]] = 1
-            # update most requested file if needed
-            if file_dict[entry[1]] > file_dict[results[5]]:
-                results[5] = entry[1]
-            # update least requested file if needed
-            elif file_dict[entry[1]] < file_dict[results[5]]:
-                results[6] = entry[1]
-
-    # add most/least totals to results
-    results[7] = file_dict[results[5]]
-    results[8] = file_dict[results[6]]
+    results[0] = len(junk_free)
 
     return results
 
@@ -134,6 +128,7 @@ def clean_up():
 
 
 
+# print a report of parsed data
 def report(results):
     # print report
     print('\n'+'='*70)
@@ -179,8 +174,12 @@ def main():
     if os.path.isfile('Jan_Log.txt'):
         clean_up()
     junk_free = log_pull('https://s3.amazonaws.com/tcmg476/http_access_log')
-    total_clean_lines = month_split(junk_free)
-    results = parse(junk_free, total_clean_lines)
+    results = month_split(junk_free)
+
+    # set some things
+    results[7] = file_dict[results[5]]
+    results[8] = file_dict[results[6]]
+
     report(results)
 
     # stop the clock
