@@ -17,6 +17,7 @@ import os
 
 #set up some global stuff
 file_dict = {' ':5}
+#          0    1     2   3 4  5   6  7 8
 results = [0,[0]*7,[0]*12,0,0,' ',' ',0,0]
 
 # fetch from URL and return content in variable 'lines'
@@ -57,21 +58,21 @@ def parse_2(entry):
     # check if file is in dictionary
     if entry[1] in file_dict:
         file_dict[entry[1]] += 1
-        # update most requested file if needed
-        if file_dict[entry[1]] > file_dict[results[5]]:
-            results[5] = entry[1]
-        # update least requested file if needed
-        elif file_dict[entry[1]] < file_dict[results[5]]:
-            results[6] = entry[1]
+        # # update most requested file if needed
+        # if file_dict[entry[1]] > file_dict[results[5]]:
+        #     results[5] = entry[1]
+        # # update least requested file if needed
+        # elif file_dict[entry[1]] < file_dict[results[5]]:
+        #     results[6] = entry[1]
     # if not in dictionary, add it
     else:
         file_dict[entry[1]] = 1
         # update most requested file if needed
-        if file_dict[entry[1]] > file_dict[results[5]]:
-            results[5] = entry[1]
-        # update least requested file if needed
-        elif file_dict[entry[1]] < file_dict[results[5]]:
-            results[6] = entry[1]
+        # if file_dict[entry[1]] > file_dict[results[5]]:
+        #     results[5] = entry[1]
+        # # update least requested file if needed
+        # elif file_dict[entry[1]] < file_dict[results[5]]:
+        #     results[6] = entry[1]
 
     # check error code
     if entry[2][0] == '3':
@@ -177,8 +178,27 @@ def main():
     results = month_split(junk_free)
 
     # set some things
-    results[7] = file_dict[results[5]]
-    results[8] = file_dict[results[6]]
+    # results[7] = file_dict[results[5]]
+    # results[8] = file_dict[results[6]]
+    highest_key = max(file_dict.values())
+    highest_term = [k for k, v in file_dict.items() if v == highest_key]
+    results[5] = highest_term
+    results[7] = highest_key
+    lowest_key = min(file_dict.values())
+    lowest_term = [k for k, v in file_dict.items() if v == lowest_key]
+    results[6] = lowest_term
+    results[8] = lowest_key
+
+
+
+#           0    1     2   3 4  5   6  7 8
+#results = [0,[0]*7,[0]*12,0,0,' ',' ',0,0]
+# results = [ Total Entries , [Weekdays] , [Months] , 3xx Total , 4xx Total , Most Req. , Least Req., Most total, Least total ]
+
+
+
+
+
 
     report(results)
 
